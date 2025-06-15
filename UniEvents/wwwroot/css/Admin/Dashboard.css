@@ -1,0 +1,159 @@
+﻿html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9f9f9;
+    color: #000;
+}
+
+/* Admin Dashboard */
+.admin-dashboard {
+    text-align: center;
+    width: 100%;
+    position: relative;
+}
+
+/* Header */
+.header {
+    width: 100%;
+    background-color: #2d2475;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 30px;
+    align-items: center;
+    position: fixed; /* ثابت أعلى الصفحة */
+    top: 0; /* يجعلها في الأعلى */
+    left: 0; /* يغطي كامل العرض */
+    z-index: 999; /* لتكون فوق باقي العناصر */
+    box-sizing: border-box; /* لتحديد الحواف */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .logo img {
+        height: 40px;
+    }
+
+.admin-info i {
+    font-size: 24px;
+    margin-left: 10px;
+}
+
+/* Title */
+.title {
+    font-size: 28px;
+    margin: 20px 0;
+}
+
+/* Cards */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    width: 80%;
+    margin: 0 auto 40px;
+}
+
+.card {
+    background-color: #fefefe;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-decoration: none;
+    color: black;
+    border: 2px solid #2d2475;
+    transition: all 0.3s ease-in-out;
+}
+
+    .card:hover {
+        background-color: #2d2475;
+        color: white;
+    }
+
+    .card i {
+        font-size: 40px;
+        margin-bottom: 15px;
+    }
+
+/* Footer */
+footer {
+    background-color: #2d2475;
+    color: white;
+    padding: 10px 15px; /* قللنا البادينغ */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 12px;
+    z-index: 1000;
+}
+
+.footer-columns {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+    .footer-columns > div {
+        flex: 1 1 150px;
+        min-width: 120px;
+    }
+
+    .footer-columns h3,
+    .footer-columns h4 {
+        margin-bottom: 5px;
+        font-size: 13px;
+    }
+
+    .footer-columns ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-columns li {
+        margin: 3px 0;
+        font-size: 11px;
+    }
+
+.social-icons {
+    margin-top: 5px;
+}
+
+    .social-icons i {
+        margin-right: 6px;
+        font-size: 14px;
+    }
+
+footer p {
+    margin-top: 10px;
+    font-size: 10px;
+    text-align: center;
+}
+

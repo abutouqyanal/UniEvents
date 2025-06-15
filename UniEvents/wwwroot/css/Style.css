@@ -1,0 +1,473 @@
+﻿@model IEnumerable<UniEvents.Models.Event> @ {
+    Layout = null;
+    // يبقى كما هو لأنك لا تستخدم Layout ViewData["Title"] = "UniEvents - Explore Events";
+    // عنوان أفضل للصفحة
+}
+
+@using System.Security.Claims @using System.Globalization @ {
+    var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Guest";
+    // var userEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "Guest";
+    // Not used bool isUserLoggedIn = User.Identity.IsAuthenticated;
+    // التحقق من تسجيل الدخول // تحديد عدد العناصر المراد عرضها في البداية int initialItems = 6;
+}
+
+<!DOCTYPE html >
+<html lang="en" >
+<head >
+<meta charset="utf-8" >
+<title > @ViewData["Title"]</title >
+<meta content="width=device-width, initial-scale=1.0" name="viewport" >
+<meta content="University Events, UniEvents, Event Management" name="keywords" >
+<meta content="Manage and explore university events effortlessly with UniEvents." name="description" >
+<!-- Favicon -->
+<link href="~/image/favicon.png" rel="icon" > <!-- افتراضيًا، استبدله برمزك -->
+<!-- Google Web Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" >
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin >
+<!-- استبدل بالخطوط المستخدمة في التصميم إذا كانت مختلفة -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" >
+<!-- Icon Font Stylesheet -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" > <!-- إصدار أحدث من Font Awesome -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" > <!-- Bootstrap Icons إذا كنت بحاجة إليها -->
+<!-- Libraries Stylesheet -->
+<link href="~/lib/animate/animate.min.css" rel="stylesheet" >
+<link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" >
+<link href="~/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" / >
+<!-- Customized Bootstrap Stylesheet -->
+<link href="~/css/bootstrap.min.css" rel="stylesheet" >
+<!-- Template Stylesheet - هنا يجب أن تضع تنسيقاتك المخصصة -->
+<link href="~/css/style.css" rel="stylesheet" >
+<!-- <link rel="stylesheet" href="~/css/Home.css" > --> <!-- يمكنك الدمج في style.css -->
+<style >
+/* أضف بعض الأنماط الأساسية هنا أو في style.css */
+body {
+    font-family: 'Poppins', sans-serif; /* مثال على تغيير الخط */
+}
+
+.header-area {
+    background-color: #0033a0; /* مثال للون الهيدر الأزرق الداكن */
+    padding: 15px 0;
+    color: white;
+}
+
+    .header-area .navbar-brand img {
+        max-height: 40px; /* تعديل حجم اللوجو */
+    }
+
+    .header-area .nav-link,
+    .header-area .btn-outline-light,
+    .header-area .profile-btn-new {
+        color: white;
+        margin-left: 10px;
+        border-radius: 20px; /* حواف دائرية للأزرار */
+        padding: 8px 20px;
+        border: 1px solid white;
+    }
+
+        .header-area .btn-outline-light:hover,
+        .header-area .profile-btn-new:hover {
+            background-color: white;
+            color: #0033a0;
+        }
+
+        .header-area .profile-btn-new i {
+            margin-left: 8px; /* مسافة لأيقونة المستخدم */
+            font-size: 1.2em;
+            vertical-align: middle;
+        }
+
+
+.hero-section {
+    background-color: #0033a0; /* نفس لون الهيدر */
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+}
+
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 600;
+    }
+
+.search-bar-new {
+    background-color: #1a237e; /* لون أزرق أغمق قليلاً */
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: -40px; /* لرفع شريط البحث قليلاً */
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+    .search-bar-new label {
+        color: #a7c0ff;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 0.9em;
+    }
+
+    .search-bar-new input, .search-bar-new select {
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #a7c0ff;
+        color: white;
+        width: 100%;
+        padding: 10px 0;
+        font-size: 1.1em;
+    }
+
+        .search-bar-new input::placeholder {
+            color: #d1dfff;
+        }
+
+    .search-bar-new select {
+        appearance: none;
+        background: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') no-repeat right 10px center;
+        background-size: 16px;
+        padding-right: 30px;
+    }
+
+        .search-bar-new select option {
+            background-color: #1a237e;
+            color: white;
+        }
+/* لتلوين خيارات القائمة المنسدلة */
+
+.upcoming-events-section {
+    padding: 80px 0;
+}
+
+.filters-bar {
+    margin-bottom: 30px;
+}
+
+    .filters-bar .form-select {
+        border-radius: 20px;
+        border-color: #ddd;
+    }
+
+.event-card-new {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+    position: relative; /* <<< مهم لتحديد موضع القلب */
+}
+
+    .event-card-new:hover {
+        transform: translateY(-5px);
+    }
+
+    .event-card-new .event-card-img { /* <<< تأكد من استخدام هذا الكلاس للصورة أو عدل اسم الكلاس هنا */
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block; /* يزيل أي مسافة فارغة تحت الصورة */
+    }
+
+    .event-card-new .card-body {
+        padding: 20px;
+    }
+
+    .event-card-new .date-box {
+        display: inline-block;
+        text-align: center;
+        margin-right: 15px;
+        float: left;
+    }
+
+        .event-card-new .date-box .month {
+            font-size: 0.8em;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .event-card-new .date-box .day {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #0033a0;
+            line-height: 1;
+        }
+
+    .event-card-new .event-title {
+        font-size: 1.1em;
+        font-weight: 600;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        color: #333;
+    }
+
+    .event-card-new .event-description {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .event-card-new .details-btn { /* <<< تأكد من استخدام هذا الكلاس لزر التفاصيل أو عدله */
+        border-radius: 15px;
+    }
+
+.load-more-btn {
+    display: block;
+    margin: 30px auto 0;
+    padding: 12px 40px;
+    border-radius: 30px;
+    background-color: white;
+    color: #0033a0;
+    border: 1px solid #0033a0;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+    .load-more-btn:hover {
+        background-color: #0033a0;
+        color: white;
+    }
+
+.hidden-event {
+    display: none;
+}
+/* لإخفاء العناصر الزائدة */
+
+.make-event-banner {
+    background-color: #dde6f0;
+    padding: 60px 0;
+}
+
+    .make-event-banner h1 {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .make-event-banner p {
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    .make-event-banner .btn-create-event {
+        background-color: #3a367a;
+        color: white;
+        border-radius: 30px;
+        padding: 12px 40px;
+        font-size: 1.1em;
+    }
+
+.event-of-day-section {
+    padding: 80px 0;
+}
+
+    .event-of-day-section h2 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 40px;
+        text-align: center;
+        color: #333;
+    }
+
+.event-highlight-card {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex; /* لتنسيق الصورة بجانب النص */
+    flex-direction: column; /* الوضع الافتراضي للهواتف */
+}
+
+
+media (min-width: 992px) /* <<< خطأ بسيط هنا، كان يوجد { } فارغة */ {
+    .event-highlight-card
+
+{
+    flex-direction: row;
+}
+
+.event-highlight-card .highlight-image, .event-highlight-card .highlight-content {
+    width: 50%;
+}
+
+}
+
+.event-highlight-card .highlight-image img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+}
+
+.event-highlight-card .highlight-content {
+    padding: 30px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.event-highlight-card .highlight-date {
+    position: absolute;
+    top: 20px;
+    left: -20px;
+    background-color: #0033a0;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 0 8px 8px 0;
+    text-align: center;
+}
+
+    .event-highlight-card .highlight-date .month {
+        font-size: 0.8em;
+        text-transform: uppercase;
+    }
+
+    .event-highlight-card .highlight-date .day {
+        font-size: 1.8em;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+.event-highlight-card .highlight-title {
+    font-size: 1.8em;
+    font-weight: 600;
+    margin-top: 40px; /* لإعطاء مساحة للتاريخ */
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.event-highlight-card .highlight-description {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.event-highlight-card .highlight-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    color: #555;
+}
+
+    .event-highlight-card .highlight-details i {
+        color: #0033a0;
+        margin-right: 8px;
+    }
+
+.event-highlight-card .btn-register-now {
+    background-color: #3a367a;
+    color: white;
+    border-radius: 30px;
+    padding: 12px 35px;
+    text-align: center;
+    display: inline-block;
+    align-self: flex-start; /* لمنعه من التمدد */
+}
+
+    .event-highlight-card .btn-register-now:hover {
+        background-color: #2c2a5f;
+    }
+
+.main-footer {
+    background-color: #0a0f33; /* لون أزرق داكن جداً */
+    color: #adb5bd; /* لون رمادي فاتح للنصوص */
+    padding: 60px 0 30px;
+    font-size: 0.9em;
+}
+
+    .main-footer .footer-logo img {
+        max-height: 35px;
+        margin-bottom: 15px;
+    }
+
+    .main-footer h4 {
+        color: white;
+        margin-bottom: 20px;
+        font-size: 1.1em;
+        font-weight: 600;
+    }
+
+    .main-footer p, .main-footer li {
+        margin-bottom: 10px;
+    }
+
+    .main-footer a {
+        color: #adb5bd;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+        .main-footer a:hover {
+            color: white;
+        }
+
+    .main-footer .list-unstyled li {
+        margin-bottom: 10px;
+    }
+
+    .main-footer .social-icons a {
+        color: white;
+        font-size: 1.3em;
+        margin-right: 15px;
+        transition: color 0.3s ease;
+    }
+
+        .main-footer .social-icons a:hover {
+            color: #a7c0ff;
+        }
+
+.footer-bottom {
+    border-top: 1px solid #2c3e50;
+    padding-top: 20px;
+    margin-top: 30px;
+    font-size: 0.85em;
+    text-align: center;
+    color: #8a9ab0;
+}
+
+/* --- تنسيقات زر القلب (إضافة جديدة) --- */
+.favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out, transform 0.2s ease;
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
+}
+
+    .favorite-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .favorite-btn.active {
+        color: #e74c3c;
+    }
+
+    .favorite-btn.loading {
+        color: #f39c12;
+        cursor: progress;
+    }
+
+    .favorite-btn.disabled-favorite {
+        color: #ddd;
+        cursor: default;
+        opacity: 0.6;
+    }
+
+        .favorite-btn.disabled-favorite:hover {
+            transform: none;
+        }
+/* -------------------------------------- */
+
+</style >

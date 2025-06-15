@@ -1,0 +1,539 @@
+﻿
+@model IEnumerable<UniEvents.Models.Event>
+
+@{
+    Layout = null; // لا نستخدم Layout مشترك
+    ViewData["Title"] = "My Bookings";
+
+    // جلب معلومات المستخدم للعرض في الهيدر والجزء العلوي
+    bool isUserLoggedIn = User.Identity.IsAuthenticated;
+    var userProfile = ViewBag.UserProfile as UniEvents.Models.User;
+    var currentUserName = User.FindFirstValue(System.Security.Claims.ClaimTypes.Name) ?? "User";
+    var userEmail = User.FindFirstValue(System.Security.Claims.ClaimTypes.Email);
+    // نفترض وجود رقم الهاتف وتاريخ الميلاد في Claims أو ViewBag (أو الأفضل ViewModel)
+    var userPhoneNumber = ViewBag.PhoneNumber ?? User.FindFirstValue("phone_number") ?? "N/A"; // مثال لـ Claim
+    var userDOB = ViewBag.DateOfBirth ?? User.FindFirstValue(System.Security.Claims.ClaimTypes.DateOfBirth) ?? "N/A"; // مثال لـ Claim
+
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+   // var userEmail = userProfile?.Email ?? User.FindFirstValue(System.Security.Claims.ClaimTypes.Email) ?? "N/A";
+    var userPhone = userProfile?.PhoneNumber.ToString() ?? "N/A";
+}
+@using System.Security.Claims
+@using System.Globalization 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - UniEvents</title>
+    <!-- روابط CSS الأساسية -->
+    <link href="~/image/favicon.png" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
+    <!-- رابط CSS الأصلي للصفحة -->
+    <link rel="stylesheet" href="~/css/mybookings.css" asp-append-version="true">
+
+    <style>
+        /* --- تضمين/إعادة استخدام التنسيقات المشتركة من الصفحات السابقة --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        /* تنسيقات الهيدر والفوتر (نسخ من الردود السابقة أو style.css) */
+        .header-area {
+            background-color: #0033a0; /* ... */
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+        /* ... (باقي تنسيقات الهيدر) ... */
+        .main-footer {
+            background-color: #0a0f33; /* ... باقي تنسيقات الفوتر ... */
+        }
+        /* ... (انسخ تنسيقات الفوتر بالكامل) ... */
+        .profile-page-wrapper {
+            padding-top: 20px;
+            padding-bottom: 60px;
+        }
+        /* تقليل الهامش العلوي قليلاً */
+        .profile-container-new { /* استخدام نفس حاوية البروفايل من About */
+            max-width: 950px;
+            margin: 0 auto 30px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .profile-header-new { /* نفس تنسيق رأس البروفايل */
+            display: flex;
+            align-items: center;
+            padding: 30px 40px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+
+        .profile-pic-new {
+            position: relative;
+            margin-right: 30px;
+            flex-shrink: 0;
+        }
+
+            .profile-pic-new img {
+                width: 120px;
+                height: 120px;
+                border-radius: 15px;
+                object-fit: cover;
+                border: 3px solid #eee;
+            }
+
+            .profile-pic-new .edit-pic-btn {
+                position: absolute;
+                bottom: 5px;
+                right: 5px;
+                background-color: rgba(0, 0, 0, 0.6);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 28px;
+                height: 28px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8em;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+                .profile-pic-new .edit-pic-btn:hover {
+                    background-color: rgba(0, 0, 0, 0.8);
+                }
+
+        .profile-info-new h2 {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .profile-info-new p {
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+            .profile-info-new p strong {
+                color: #333;
+                margin-right: 5px;
+            }
+
+        .edit-profile-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #666;
+            background: none;
+            border: none;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+            .edit-profile-btn:hover {
+                color: #007bff;
+            }
+        /* تنسيق التابس (نفس كود Profile) */
+        .profile-tabs-new {
+            display: flex;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            padding: 0 40px;
+        }
+
+            .profile-tabs-new a.tab {
+                padding: 15px 20px;
+                color: #666;
+                text-decoration: none;
+                border-bottom: 3px solid transparent;
+                margin-bottom: -1px;
+                font-size: 0.9em;
+                font-weight: 500;
+                transition: color 0.3s, border-color 0.3s;
+            }
+
+                .profile-tabs-new a.tab:hover {
+                    color: #007bff;
+                }
+
+                .profile-tabs-new a.tab.active {
+                    color: #0d6efd;
+                    border-bottom-color: #0d6efd;
+                    font-weight: 600;
+                }
+
+        /* تنسيقات محتوى حجوزاتي */
+        .bookings-content {
+            padding: 30px 40px;
+        }
+
+        .filters-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+            .filters-row .filter-options, .filters-row .sort-options {
+                display: flex;
+                align-items: center;
+            }
+
+            .filters-row strong {
+                color: #333;
+                margin-right: 8px;
+            }
+
+            .filters-row .btn-filter, .filters-row .btn-sort { /* لتنسيق أي أزرار فلاتر مستقبلية */
+                margin-left: 10px;
+                font-size: 0.9em;
+                color: #007bff;
+                cursor: pointer;
+                background: none;
+                border: none;
+            }
+
+        /* تنسيق بطاقة الحجز booking-card */
+        .booking-card {
+            background-color: #fff;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+            overflow: hidden; /* مهم للعناصر الداخلية */
+            display: flex; /* لتنظيم الصورة والتفاصيل */
+            flex-direction: column; /* للتحسين على شاشات أصغر */
+        }
+
+        .booking-img {
+            width: 100%;
+            height: 200px; /* ارتفاع أكبر للصورة البارزة */
+            object-fit: cover;
+            display: block;
+        }
+
+        .booking-details {
+            padding: 20px;
+            display: flex;
+            flex-direction: column; /* أو row إذا كان التصميم أفقي */
+            flex-grow: 1;
+            position: relative; /* لضبط موقع التاريخ المطلق */
+        }
+
+        .booking-date {
+            position: absolute;
+            top: -30px; /* رفعه فوق المحتوى */
+            left: 20px;
+            background-color: #343a40; /* لون خلفية التاريخ */
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.1;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+            .booking-date span {
+                display: block;
+                font-size: 1.6em;
+                font-weight: 700;
+            }
+        /* لتكبير اليوم */
+
+        .booking-details .info {
+            margin-top: 25px;
+        }
+        /* إضافة هامش علوي لتجنب التداخل مع التاريخ */
+        .booking-details h3 {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .booking-details p {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .view-btn {
+            background-color: #3a367a; /* لون أزرار "عرض الفعالية" */
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            align-self: flex-start; /* لمنع الزر من التمدد */
+            text-decoration: none; /* إذا استخدمت <a> */
+            display: inline-block; /* إذا استخدمت <a> */
+        }
+
+            .view-btn:hover {
+                background-color: #2c2a5f;
+                color: white;
+            }
+
+        .booking-details .meta {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between; /* أو space-around */
+            font-size: 0.85em;
+            color: #777;
+        }
+
+            .booking-details .meta span {
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .booking-details .meta i {
+                margin-right: 6px;
+                color: #888;
+            }
+
+        /* تحسينات للشاشات الكبيرة */
+        @@media (min-width: 768px) {
+            .booking-card {
+                flex-direction: row; /* صورة بجانب التفاصيل */
+            }
+
+            .booking-img {
+                width: 250px; /* عرض ثابت للصورة */
+                height: auto; /* ارتفاع تلقائي */
+                max-height: 220px; /* تحديد ارتفاع أقصى */
+            }
+
+            .booking-details {
+                padding: 25px 30px;
+            }
+
+            .booking-date {
+                top: 25px;
+                left: -25px; /* تعديل موضع التاريخ */
+            }
+
+            .booking-details .info {
+                margin-top: 0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    @* --- الهيدر --- *@
+    <header class="header-area sticky-top">
+        @* ... (كود الهيدر من الصفحات الأخرى) ... *@
+        <nav class="navbar navbar-expand-lg navbar-dark container"><a class="navbar-brand" asp-action="Explore" asp-controller="Home"><img src="~/image/UniEvents (2).png" alt="UniEvents Logo"></a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse justify-content-end" id="navbarNav"><ul class="navbar-nav align-items-center">@if (isUserLoggedIn)
+                    {
+                        <li class="nav-item"><a asp-controller="Eventt" asp-action="Create" class="btn btn-outline-light">Create Event</a></li>
+
+                        <li class="nav-item"><a asp-action="MyFavorites" asp-controller="Home" class="btn btn-outline-light"><i class="fas fa-heart"></i> My Favorites</a></li>
+
+                        <li class="nav-item"><a asp-action="About" asp-controller="Profile" class="btn profile-btn-new">@currentUserName <i class="fas fa-user-circle"></i></a></li>
+
+                        <li class="nav-item"><a class="nav-link" style="border:none; padding-left:5px; padding-right:5px;" href="@Url.Action("Logout", "Account")" title="Logout"><i class="fas fa-sign-out-alt"></i></a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a href="@Url.Action("Login", "Account")" class="btn btn-outline-light">Login</a></li>
+
+                        <li class="nav-item"><a href="@Url.Action("Register", "Account")" class="btn btn-light" style="color:#0033a0;">Register</a></li>
+                    }<li class="nav-item"><a href="#" class="btn btn-outline-light">Help Center</a></li></ul></div></nav>
+    </header>
+    <!-- نهاية الهيدر -->
+
+
+    @* --- محتوى صفحة البروفايل - الجزء العلوي --- *@
+    <div class="container profile-page-wrapper">
+        @* --- رأس البروفايل (يعاد استخدامه) --- *@
+        <div class="profile-container-new mb-4">
+            @* حاوية بيضاء للجزء العلوي *@
+            <div class="profile-header-new">
+                <div class="profile-pic-new">
+                    <img src="~/image/user-placeholder.png" alt="User Photo" id="profileImage"> @* صورة افتراضية *@
+                    <button class="edit-pic-btn" title="Change Profile Picture" onclick="alert('Upload feature coming soon!');">
+                        @* تعطيل مؤقت *@
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
+                <div class="profile-info-new">
+                    <h2>@currentUserName</h2>
+@*                     <p><strong>Date of Birth:</strong> @userDOB</p> *@
+                    <p><strong>Email ID:</strong> @userEmail</p>
+                    <p><strong>Contact number:</strong> @userPhone</p>
+                </div>
+                <a asp-action="Edit" asp-controller="Profile" class="edit-profile-btn" title="Edit Profile Details">
+                    <i class="fas fa-pen"></i>
+                </a>
+            </div>
+
+            @* --- التابات (يعاد استخدامه) --- *@
+            <nav class="profile-tabs-new">
+                <a asp-action="About" asp-controller="Profile" class="tab @(currentAction == "About" ? "active" : "")">About me</a>
+                <a asp-action="MyBookings" asp-controller="Profile" class="tab @(currentAction == "MyBookings" ? "active" : "")">My Bookings</a>
+                <a asp-action="MyEvents" asp-controller="Profile" class="tab @(currentAction == "MyEvents" ? "active" : "")">My Events</a>
+                <a asp-action="Calendar" asp-controller="Profile" class="tab @(currentAction == "Calendar" ? "active" : "")">Calendar</a>
+               @*  <a asp-action="Edit" asp-controller="Profile" class="tab @(currentAction == "Edit" ? "active" : "")">Settings</a> *@
+            </nav>
+        </div>
+
+        @* --- منطقة محتوى "My Bookings" --- *@
+        <div class="bookings-content">
+            <!-- Filters -->
+            <div class="filters-row">
+                <div class="filter-options">
+                    <span><strong>Filter By:</strong></span>
+                    @* يمكنك إضافة قوائم منسدلة أو أزرار للفلترة هنا لاحقاً *@
+                    <button class="btn-filter" type="button">All Types</button>
+                </div>
+                <div class="sort-options">
+                    <span><strong>Sort By:</strong> Date</span>
+                    @* يمكنك إضافة أيقونة سهم أو زر للفرز *@
+                    <button class="btn-sort" type="button"><i class="fas fa-sort"></i></button>
+                </div>
+            </div>
+
+            <!-- Bookings List -->
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var eventItem in Model)
+                {
+                    @* استخدمنا booking-card هنا بدلاً من event-card-new للتخصيص *@
+                    <div class="booking-card">
+                        @* جعل الصورة كرابط للتفاصيل *@
+                        <a asp-action="Details" asp-controller="Eventt" asp-route-id="@eventItem.EventId" class="booking-image-link">
+                            <img src="@(!string.IsNullOrEmpty(eventItem.ImagePath) ? Url.Content(eventItem.ImagePath) : Url.Content("~/image/default-event-large.jpg"))" class="booking-img" alt="@eventItem.EventName"> @* صورة افتراضية بحجم أكبر *@
+                        </a>
+                        <div class="booking-details">
+                            <div class="booking-date">
+                                @* عرض اليوم وتحته الشهر *@
+                                <span>@eventItem.StartDate.ToString("dd")</span>
+                                @eventItem.StartDate.ToString("MMM").ToUpper()
+                            </div>
+                            <div class="info">
+                                <h3>
+                                    <a asp-action="Details" asp-controller="Eventt" asp-route-id="@eventItem.EventId" style="color: inherit; text-decoration: none;">@eventItem.EventName</a>
+                                </h3>
+                                <p>@eventItem.Description</p>
+                                <div class="meta">
+                                    <span><i class="fa fa-map-marker-alt"></i> @(eventItem.Location ?? "N/A")</span>
+                                    @{
+                                        // الوصول للخاصية من نوع int
+                                        var capacityValue = eventItem.Capicity; // هذا الآن int
+                                        string capacityText = "N/A"; // القيمة الافتراضية إذا كانت السعة 0 أو أقل
+
+                                        if (capacityValue > 0)
+                                        {
+                                            // إذا كانت أكبر من صفر، اعرضها
+                                            capacityText = $"{capacityValue}";
+                                        }
+                                        // إذا كانت 0، ستبقى "N/A"
+                                    }
+                                    <span><i class="fa fa-users"></i> @capacityText</span>
+                                </div>
+                                @* جعل الزر كرابط Tag Helper *@
+                                <a asp-action="Details" asp-controller="Eventt" asp-route-id="@eventItem.EventId" class="btn view-btn mt-3">View Event</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center no-favorites-message">
+                    @* إعادة استخدام كلاس الرسالة *@
+                    <p>You haven't booked any events yet.</p>
+                    <a asp-action="Explore" asp-controller="Home" class="btn btn-primary">Explore Events</a>
+                </div>
+            }
+        </div>
+    </div>
+    @* --- نهاية المحتوى الرئيسي --- *@
+
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <a href="#" class="footer-logo">
+                        <img src="~/image/UniEvents (2).png" alt="UniEvents Logo">
+                    </a><p class="mt-3">Manage and explore events effortlessly. Log in to create, view, and stay updated on all event activities.</p>
+                    <div class="social-icons mt-4">
+                        <a href="#"><i class="fab fa-instagram"></i></a><a href="#">
+                            <i class="fab fa-facebook-f">
+                            </i>
+                        </a><a href="#"><i class="fab fa-whatsapp"></i></a><a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4>Help & Support</h4><ul class="list-unstyled">
+                        <li>
+                            <a href="#">Customer Support</a>
+                        </li>
+                        <li><a href="#">Organizer Support</a></li>
+                        <li>
+                            <a href="#">Terms of Service</a>
+                        </li>
+                        <li><a href="#">Conditions of Service</a></li>
+                        <li>
+                            <a href="#">Privacy Policy</a>
+                        </li>
+                        <li><a href="#">Report a scam</a></li>
+                    </ul>
+                </div><div class="col-lg-3 col-md-6">
+                    <h4>About us</h4><ul class="list-unstyled">
+                        <li><a href="#">Leadership</a></li>
+                        <li>
+                            <a href="#">Our Mission</a>
+                        </li>
+                        <li><a href="#">Our Vision</a></li>
+                        <li>
+                            <a href="#">Features</a>
+                        </li>
+                        <li><a href="#">Career At</a></li>
+                    </ul>
+                </div><div class="col-lg-3 col-md-6">
+                    <h4>Contact us</h4><p><strong>Mail us at:</strong><br> EventTribe@Gmail.com</p>
+                    <p><strong>Contact at:</strong><br> 1234567890<br> 0987654321</p><ul class="list-unstyled mt-3">
+                        <li>
+                            <a href="#">Press</a>
+                        </li>
+                        <li><a href="#">Blogs</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">Copyright © @DateTime.Now.Year Xpro. All Rights Reserved.</div>
+        </div>
+    </footer>
+    <!-- JavaScript Libraries (المشتركة) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    @* يمكنك إضافة أي سكربتات أخرى هنا إذا كانت صفحة الحجوزات تتطلبها *@
+
+</body>
+</html>

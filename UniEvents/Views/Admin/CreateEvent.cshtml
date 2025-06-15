@@ -1,0 +1,325 @@
+﻿@model UniEvents.Models.Event // <-- تأكد من وجود موديل مناسب إذا كنت تستخدمه للـ validation
+                                     @using System.Security.Claims
+@{
+    Layout = null; // نلغي استخدام أي Layout خارجي
+    ViewData["Title"] = "Create a New Event";
+    // جلب اسم المستخدم لعرضه في الهيدر
+    var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Admin";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - UniEvents Admin</title>
+
+    <!-- رابط مكتبة الأيقونات Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Bootstrap CSS (مفيد لتنسيق الـ Grid) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- ========================================================== -->
+    <!--  CSS المدمج: كل التنسيقات موجودة هنا داخل الصفحة          -->
+    <!-- ========================================================== -->
+    <style>
+/* General Body Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #f4f7fa;
+    color: #333;
+}
+
+/* Main Dashboard Container */
+.admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Styles */
+.header {
+    background-color: #2c3e50;
+    color: #ffffff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+    .header .logo {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+    }
+
+        .header .logo img {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+    .header .admin-info {
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem;
+    }
+
+        .header .admin-info .fa-user-circle {
+            font-size: 1.8rem;
+            margin-left: 10px;
+        }
+
+.admin-info .logout-btn {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin-left: 20px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+    .admin-info .logout-btn:hover {
+        color: #ff4d4d;
+    }
+
+/* Main Content Area */
+main {
+    flex-grow: 1;
+    padding: 20px 40px;
+}
+
+.page-title {
+    text-align: center;
+    margin: 20px 0 40px;
+    font-size: 2.5rem;
+    color: #2c3e50;
+}
+
+/* Form Container Styles */
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Input Styles */
+.event-form .form-label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.event-form .form-control, .event-form .form-select {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+}
+
+    .event-form .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+
+/* Submit Button */
+.submit-btn {
+    background-color: #2c3e50;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .submit-btn:hover {
+        background-color: #34495e;
+    }
+
+/* Validation Summary */
+.validation-summary-errors ul {
+    padding-left: 20px;
+}
+
+.validation-summary-errors li {
+    color: #c0392b; /* Red */
+}
+
+/* Footer Styles */
+footer {
+    background-color: #2c3e50;
+    color: #bdc3c7;
+    padding: 40px 20px 20px;
+    margin-top: 50px;
+}
+
+.footer-columns {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #34495e;
+}
+
+    .footer-columns > div {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .footer-columns h3, .footer-columns h4 {
+        color: #ffffff;
+        margin-bottom: 15px;
+    }
+
+    .footer-columns ul {
+        list-style: none;
+        padding: 0;
+    }
+
+        .footer-columns ul li {
+            margin-bottom: 10px;
+            color: #bdc3c7;
+        }
+
+.social-icons i {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+    .social-icons i:hover {
+        color: #ffffff;
+    }
+
+.copyright {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+</style>
+</head>
+<body>
+    <div class="admin-dashboard">
+        <!-- ======================= HEADER START ======================= -->
+        <header class="header">
+            <a asp-controller="Admin" asp-action="Dashboard" class="logo">
+                <img src="~/image/UniEvents (2).png" alt="UniEvents Logo">
+            </a>
+            <div class="admin-info">
+                <span>@userName</span>
+                <i class="fa fa-user-circle"></i>
+                <a asp-controller="Account" asp-action="Logout" class="logout-btn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </header>
+        <!-- ======================= HEADER END ======================= -->
+
+        <!-- ======================= المحتوى الرئيسي للصفحة ======================= -->
+        <main>
+            <h1 class="page-title">Create New Event</h1>
+
+            <div class="form-container">
+                <form class="event-form" method="post" enctype="multipart/form-data" asp-action="CreateEvent" asp-controller="Admin">
+
+                    @* To display validation errors *@
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label for="EventName" class="form-label">Event Title</label>
+                        <input type="text" id="EventName" name="EventName" class="form-control" required />
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="StartDate" class="form-label">Start Date & Time</label>
+                            <div class="input-group">
+                                <input type="date" id="StartDate" name="StartDate" class="form-control" required />
+                                <input type="time" name="StartTime" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="EndDate" class="form-label">End Date & Time</label>
+                            <div class="input-group">
+                                <input type="date" id="EndDate" name="EndDate" class="form-control" required />
+                                <input type="time" name="EndTime" class="form-control" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="Location" class="form-label">Location</label>
+                            <input type="text" id="Location" name="Location" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Capicity" class="form-label">Capacity (Seats)</label>
+                            <input type="number" id="Capicity" name="Capicity" class="form-control" required min="0" placeholder="0 for unlimited" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                             <label for="Sponsor" class="form-label">Sponsor</label>
+                             <input type="text" id="Sponsor" name="Sponsor" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                             <label for="College" class="form-label">College</label>
+                             <input type="text" id="College" name="College" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="EventType" class="form-label">Event Type</label>
+                            <input type="text" id="EventType" name="EventType" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="NewCategory" class="form-label">Category</label>
+                            <input type="text" id="NewCategory" name="NewCategory" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="EventImage" class="form-label">Event Banner Image</label>
+                        <input type="file" id="EventImage" name="EventImage" class="form-control" accept="image/*" required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="Description" class="form-label">Event Description</label>
+                        <textarea id="Description" name="Description" class="form-control" rows="5" required></textarea>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="submit-btn"><i class="fas fa-plus-circle me-2"></i>Submit Event</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+        <!-- ======================= المحتوى الرئيسي ينتهي هنا ======================= -->
+
+        <!-- ======================= FOOTER START ======================= -->
+        <footer>
+            <div class="footer-columns">
+                <div><h3>UniEvents</h3><p>Manage and explore events effortlessly...</p><div class="social-icons"><i class="fab fa-instagram"></i><i class="fab fa-facebook"></i><i class="fab fa-whatsapp"></i><i class="fab fa-twitter"></i></div></div>
+                <div><h4>Help & Support</h4><ul><li>Customer Support</li><li>Organizer Support</li><li>Terms of Service</li><li>Privacy Policy</li></ul></div>
+                <div><h4>About us</h4><ul><li>Leadership</li><li>Our Vision</li><li>Features</li><li>Career</li></ul></div>
+                <div><h4>Contact us</h4><ul><li>Email: EventTribe@Gmail.com</li><li>Phone 1: 0796355890</li><li>Phone 2: 0792398007</li></ul></div>
+            </div>
+            <p class="copyright">© @DateTime.Now.Year UniEvents. ALL RIGHTS RESERVED</p>
+        </footer>
+        <!-- ======================= FOOTER END ======================= -->
+    </div>
+</body>
+</html>

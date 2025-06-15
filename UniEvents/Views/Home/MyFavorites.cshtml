@@ -1,0 +1,404 @@
+﻿@model IEnumerable<UniEvents.Models.Event>
+@using System.Security.Claims
+
+@{
+    Layout = null;
+    ViewData["Title"] = "My Favorite Events";
+    var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Guest";
+    bool isUserLoggedIn = User.Identity.IsAuthenticated;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - UniEvents</title>
+
+    <!-- === روابط CSS الأساسية للموقع === -->
+    <link href="~/image/favicon.png" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
+
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex-grow: 1;
+        }
+        /* --- Header Styles (التصميم الموحد) --- */
+        .header-area {
+            background-color: #0033a0;
+        }
+
+            .header-area .navbar-nav .nav-item .btn {
+                border-radius: 20px;
+                padding: 8px 20px;
+                margin-left: 10px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+                .header-area .navbar-nav .nav-item .btn.btn-outline-light {
+                    border: 1px solid rgba(255, 255, 255, 0.7);
+                    color: rgba(255, 255, 255, 0.9);
+                }
+
+                    .header-area .navbar-nav .nav-item .btn.btn-outline-light:hover {
+                        background-color: white;
+                        color: #0033a0;
+                    }
+
+                .header-area .navbar-nav .nav-item .btn.btn-light.active-page {
+                    background-color: white;
+                    color: #0033a0;
+                    font-weight: 600;
+                }
+
+            .header-area .navbar-nav .nav-item .logout-link {
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 1.2rem;
+                transition: color 0.3s ease;
+            }
+
+        /* --- Footer Styles (نفس لون الهيدر) --- */
+        .main-footer {
+            background-color: #0033a0;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 60px 0 0;
+        }
+
+            .main-footer h4 {
+                color: white;
+            }
+
+            .main-footer a {
+                color: rgba(255, 255, 255, 0.7);
+                text-decoration: none;
+            }
+
+                .main-footer a:hover {
+                    color: white;
+                }
+
+        .footer-bottom {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        /* --- Page-specific styles --- */
+        .page-header {
+            border-bottom: 1px solid #dee2e6;
+            background-color: white;
+        }
+
+        .event-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            transition: all 0.3s ease;
+        }
+
+            .event-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            }
+
+        .event-card-img-wrapper {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .event-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .main-footer {
+            background-color: #0a0f33; /* لون أزرق داكن جداً */
+            color: #adb5bd; /* لون رمادي فاتح للنصوص */
+            padding: 60px 0 30px;
+            font-size: 0.9em;
+        }
+
+            .main-footer .footer-logo img {
+                max-height: 35px;
+                margin-bottom: 15px;
+            }
+
+            .main-footer h4 {
+                color: white;
+                margin-bottom: 20px;
+                font-size: 1.1em;
+                font-weight: 600;
+            }
+
+            .main-footer p, .main-footer li {
+                margin-bottom: 10px;
+            }
+
+            .main-footer a {
+                color: #adb5bd;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .main-footer a:hover {
+                    color: white;
+                }
+
+            .main-footer .list-unstyled li {
+                margin-bottom: 10px;
+            }
+
+            .main-footer .social-icons a {
+                color: white;
+                font-size: 1.3em;
+                margin-right: 15px;
+                transition: color 0.3s ease;
+            }
+
+                .main-footer .social-icons a:hover {
+                    color: #a7c0ff;
+                }
+
+        .footer-bottom {
+            border-top: 1px solid #2c3e50;
+            padding-top: 20px;
+            margin-top: 30px;
+            font-size: 0.85em;
+            text-align: center;
+            color: #8a9ab0;
+        }
+    </style>
+</head>
+<body>
+    <!-- ======================= HEADER START ======================= -->
+    <header class="header-area sticky-top shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark container">
+            <a class="navbar-brand" asp-action="Explore" asp-controller="Home"><img src="~/image/UniEvents (2).png" alt="UniEvents Logo" style="max-height: 40px;"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                <ul class="navbar-nav align-items-center">
+                    @if (isUserLoggedIn)
+                    {
+                        <li class="nav-item"><a asp-controller="Eventt" asp-action="Create" class="btn btn-outline-light">Create Event</a></li>
+                        <li class="nav-item"><a asp-action="MyFavorites" asp-controller="Home" class="btn btn-light active-page"><i class="fas fa-heart me-2"></i>Favorites</a></li>
+                        <li class="nav-item"><a asp-controller="Profile" asp-action="About" class="btn btn-outline-light">@userName</a></li>
+                        <li class="nav-item"><a class="nav-link logout-link" asp-controller="Account" asp-action="Logout" title="Logout"><i class="fas fa-sign-out-alt"></i></a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a asp-controller="Account" asp-action="Login" class="btn btn-outline-light">Login</a></li>
+                        <li class="nav-item"><a asp-controller="Account" asp-action="Register" class="btn btn-light" style="color:#0033a0;">Register</a></li>
+                    }
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- ======================= HEADER END ======================= -->
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/68498789e7d8d619164a4760/1itfjisld';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+    <!-- ======================= المحتوى الرئيسي للصفحة ======================= -->
+    <main role="main">
+        <div class="page-header py-4 text-center">
+            <div class="container">
+                <h1 class="display-5">@ViewData["Title"]</h1>
+                <p class="lead text-muted">Your curated collection of saved university events.</p>
+            </div>
+        </div>
+
+        <div class="container py-5">
+            <div class="row g-4" id="favorite-event-list">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var ev in Model)
+                    {
+                        <div class="col-lg-4 col-md-6 event-item">
+                            <div class="card event-card position-relative">
+                                @if (isUserLoggedIn)
+                                {
+                                    <button class="favorite-btn" data-event-id="@ev.EventId" title="Remove from Favorites">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                }
+                                <div class="event-card-img-wrapper">
+                                    <a asp-action="Details" asp-controller="Eventt" asp-route-id="@ev.EventId">
+                                        <img src="@(Url.Content(ev.ImagePath ?? "~/image/default.png"))" class="event-card-img" alt="@ev.EventName">
+                                    </a>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title"><a asp-action="Details" asp-controller="Eventt" asp-route-id="@ev.EventId" class="text-dark text-decoration-none">@ev.EventName</a></h5>
+                                    <p class="card-text text-muted small flex-grow-1">@ev.Description?.Substring(0, Math.Min(ev.Description.Length, 100))... </p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="text-primary fw-bold"><i class="far fa-calendar-alt me-2"></i>@ev.StartDate.ToString("dd MMM")</span>
+                                        <a asp-action="Details" asp-controller="Eventt" asp-route-id="@ev.EventId" class="btn btn-sm btn-outline-primary">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div id="no-favorites-message" class="col-12 text-center">
+                        <div class="p-5 bg-white rounded-3 shadow-sm">
+                            <i class="far fa-folder-open fa-4x text-primary mb-4"></i>
+                            <h3 class="lead mb-3 fw-bold text-dark">Your Favorites List is Empty</h3>
+                            <p class="text-muted mb-4">Explore events and add some!</p>
+                            <a asp-action="Explore" asp-controller="Home" class="btn btn-primary btn-lg px-5 rounded-pill"><i class="fas fa-search me-2"></i>Explore Events</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </main>
+    <!-- ======================= المحتوى الرئيسي ينتهي هنا ======================= -->
+    <!-- ======================= FOOTER START ======================= -->
+    <!-- Footer Start -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <a href="#" class="footer-logo">
+                        <img src="~/image/UniEvents (2).png" alt="UniEvents Logo">
+                    </a><p class="mt-3">Manage and explore events effortlessly. Log in to create, view, and stay updated on all event activities.</p>
+                    <div class="social-icons mt-4">
+                        <a href="#"><i class="fab fa-instagram"></i></a><a href="#">
+                            <i class="fab fa-facebook-f">
+                            </i>
+                        </a><a href="#"><i class="fab fa-whatsapp"></i></a><a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4>Help & Support</h4><ul class="list-unstyled">
+                        <li>
+                            <a href="#">Customer Support</a>
+                        </li>
+                        <li><a href="#">Organizer Support</a></li>
+                        <li>
+                            <a href="#">Terms of Service</a>
+                        </li>
+                        <li><a href="#">Conditions of Service</a></li>
+                        <li>
+                            <a href="#">Privacy Policy</a>
+                        </li>
+                        <li><a href="#">Report a scam</a></li>
+                    </ul>
+                </div><div class="col-lg-3 col-md-6">
+                    <h4>About us</h4><ul class="list-unstyled">
+                        <li><a href="#">Leadership</a></li>
+                        <li>
+                            <a href="#">Our Mission</a>
+                        </li>
+                        <li><a href="#">Our Vision</a></li>
+                        <li>
+                            <a href="#">Features</a>
+                        </li>
+                        <li><a href="#">Career At</a></li>
+                    </ul>
+                </div><div class="col-lg-3 col-md-6"><h4>Contact us</h4><p><strong>Mail us at:</strong><br> EventTribe@Gmail.com</p><p><strong>Contact at:</strong><br> 1234567890<br> 0987654321</p><ul class="list-unstyled mt-3"><li><a href="#">Press</a></li><li><a href="#">Blogs</a></li></ul></div>
+            </div><div class="footer-bottom">Copyright © @DateTime.Now.Year Xpro. All Rights Reserved.</div>
+        </div>
+    </footer>
+    <!-- ======================= FOOTER END ======================= -->
+    <!-- === روابط JS الأساسية للموقع === -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+    @functions {
+        public string GetAntiXsrfRequestToken() { return Xsrf.GetAndStoreTokens(Context).RequestToken; }
+    }
+    <script>
+        $(document).ready(function () {
+            const antiForgeryToken = '@GetAntiXsrfRequestToken()';
+            const $eventList = $('#favorite-event-list');
+
+            $eventList.on('click', '.favorite-btn', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const $button = $(this);
+                if ($button.hasClass('loading')) return;
+
+                const $eventItem = $button.closest('.event-item');
+                const eventId = $button.data('event-id');
+                const url = '@Url.Action("ToggleFavorite", "Eventt")'; 
+
+                if (!confirm('Are you sure you want to remove this event from your favorites?')) {
+                    return;
+                }
+
+                $button.addClass('loading').prop('disabled', true).html('<i class="fas fa-spinner"></i>');
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        eventId: eventId,
+                        __RequestVerificationToken: antiForgeryToken
+                    },
+                    success: function (response) {
+                        if (response.success && !response.isFavorite) {
+                            $eventItem.fadeOut(400, function() {
+                                $(this).remove();
+                                if ($eventList.find('.event-item').length === 0) {
+                                    $eventList.html($('#no-favorites-message-template').html());
+                                }
+                            });
+                        } else {
+                            alert(response.message || "Could not remove event from favorites.");
+                            $button.removeClass('loading').prop('disabled', false).html('<i class="fas fa-heart"></i>');
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred. Please try again.");
+                        $button.removeClass('loading').prop('disabled', false).html('<i class="fas fa-heart"></i>');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script type="text/template" id="no-favorites-message-template">
+        <div class="col-12 text-center">
+            <div class="p-5 bg-white rounded-3 shadow-sm">
+                <i class="far fa-folder-open fa-4x text-primary mb-4"></i>
+                <h3 class="lead mb-3 fw-bold text-dark">Your Favorites List is Empty</h3>
+                <p class="text-muted mb-4">Explore events and add some!</p>
+                <a href="@Url.Action("Explore", "Home")" class="btn btn-primary btn-lg px-5 rounded-pill"><i class="fas fa-search me-2"></i>Explore Events</a>
+            </div>
+        </div>
+    </script>
+</body>
+</html>

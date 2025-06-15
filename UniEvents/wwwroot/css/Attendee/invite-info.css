@@ -1,0 +1,80 @@
+﻿.create-container {
+    background-color: #2d2475;
+    color: white;
+    padding: 50px 20px;
+    border-radius: 20px;
+    max-width: 900px;
+    margin: 50px auto;
+}
+
+    .create-container h1 {
+        text-align: center;
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 15px;
+}
+
+    .tabs a,
+    .tabs span {
+        color: white;
+        font-weight: 500;
+        font-size: 16px;
+        padding: 8px 15px;
+        text-decoration: none;
+        cursor: pointer;
+        opacity: 0.7;
+    }
+
+    .tabs .active {
+        border-bottom: 2px solid white;
+        opacity: 1;
+    }
+
+.invite-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-grid {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+    .form-grid input {
+        flex: 1;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 14px;
+        color: #333;
+    }
+
+textarea {
+    width: 100%;
+    padding: 15px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    color: #333;
+}
+
+.submit-btn {
+    background-color: #7a4f00;
+    color: white;
+    padding: 12px 30px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    align-self: flex-end;
+    cursor: pointer;
+    transition: 0.3s;
+}

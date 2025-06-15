@@ -1,0 +1,176 @@
+﻿.event-details-container {
+    padding: 30px 20px;
+    max-width: 1000px;
+    margin: auto;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.event-banner img {
+    width: 100%;
+    border-radius: 15px;
+    object-fit: cover;
+    height: 300px;
+}
+
+.event-date {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #444;
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.team-btn {
+    background-color: #3e4a54;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.event-info-main {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.info-column {
+    flex: 1;
+}
+
+.map-img img {
+    max-width: 300px;
+    border-radius: 10px;
+}
+
+.info-block {
+    margin-bottom: 20px;
+}
+
+    .info-block h4 {
+        margin-bottom: 5px;
+        font-size: 16px;
+        color: #222;
+    }
+
+.event-description {
+    margin-top: 40px;
+}
+
+    .event-description h4 {
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+
+.cta-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.book-btn {
+    background-color: #1a1870;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.seat-info {
+    color: #555;
+}
+
+.stars i {
+    color: #ccc;
+    font-size: 20px;
+}
+
+.comments-section {
+    background-color: #dce7f7;
+    margin-top: 50px;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.comment-input {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+    .comment-input textarea {
+        flex: 1;
+        border-radius: 8px;
+        padding: 10px;
+        resize: none;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        height: 80px;
+    }
+
+.post-btn {
+    padding: 10px 20px;
+    background-color: #1a1870;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.comment {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.comment-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-content h5 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.comment-content p {
+    font-size: 13px;
+    color: #444;
+    margin: 5px 0;
+}
+
+.comment-time {
+    font-size: 12px;
+    color: #888;
+}
+
+.load-more {
+    width: 100%;
+    background-color: #5393f5;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-top: 15px;
+    cursor: pointer;
+}

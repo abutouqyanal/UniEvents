@@ -1,0 +1,104 @@
+﻿@model UniEvents.Models.Attendee
+@{
+    ViewData["Title"] = "Register";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/SignUp.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- القسم اليسار -->
+        <div class="left-section">
+            <img src="~/image/UniEvents.png" alt="UniEvents.png" class="icon">
+            <br />
+            <br />
+            <h2>Manage and explore events effortlessly.</h2>
+            <p>Log in to create, view, and stay updated on all event activities.</p>
+            <br />
+            <button class="read-more">Read More</button>
+        </div>
+
+        <div class="right-section">
+            <h2>Hello!</h2>
+            <p>Sign Up to Get Started</p>
+
+            <form asp-action="Register" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" asp-for="FirstName" placeholder="First Name" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" asp-for="LastName" placeholder="Last Name" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" asp-for="Email" placeholder="Email Address" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" asp-for="PhoneNumber" placeholder="Phone Number" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" asp-for="Password" placeholder="Password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" asp-for="ConfirmPassword" placeholder="Password again" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-id-card"></i>
+                    <input type="text" asp-for="University_id" placeholder="University ID" />
+                    <span asp-validation-for="University_id" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-university"></i>
+                    <input type="text" asp-for="University_name" placeholder="University Name" />
+                    <span asp-validation-for="University_name" class="text-danger"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-book"></i>
+                    <input type="text" asp-for="University_major" placeholder="University Major" />
+                    <span asp-validation-for="University_major" class="text-danger"></span>
+                </div>
+                <button type="submit" class="register-btn">Register</button>
+            </form>
+            <p class="login-text">Already have an account? <a asp-action="Login" asp-controller="Account">Sign In</a></p>
+           
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="validation-summary-errors text-danger">
+                    <ul>
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+
+        </div>
+    </div>
+
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

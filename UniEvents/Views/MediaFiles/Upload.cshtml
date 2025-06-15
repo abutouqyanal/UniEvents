@@ -1,0 +1,495 @@
+﻿@using UniEvents.Models
+@using System.Security.Claims
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Upload Event Media";
+
+    // --- جلب بيانات لـ ViewBag والمتغيرات اللازمة ---
+    int eventId = ViewBag.EventId ?? 0;
+    var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Guest";
+    bool isUserLoggedIn = User.Identity.IsAuthenticated;
+
+    // جلب الوسائط الحالية لعرضها
+    var banner = ViewBag.Banner as MediaFile;
+    var background = ViewBag.Background as MediaFile;
+    var video = ViewBag.Video as MediaFile;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - UniEvents</title>
+
+    <!-- === روابط CSS الأساسية للموقع === -->
+    <link href="~/image/favicon.png" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
+
+    <!-- === CSS الخاص بالقالب الجديد === -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex-grow: 1;
+        }
+
+        .header-area {
+            background-color: #0033a0;
+        }
+
+            .header-area .navbar-nav .nav-item .btn {
+                border-radius: 20px;
+                padding: 8px 20px;
+                margin-left: 10px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+                .header-area .navbar-nav .nav-item .btn.btn-outline-light {
+                    border: 1px solid rgba(255, 255, 255, 0.7);
+                    color: rgba(255, 255, 255, 0.9);
+                }
+
+                    .header-area .navbar-nav .nav-item .btn.btn-outline-light:hover {
+                        background-color: white;
+                        color: #0033a0;
+                    }
+
+            .header-area .navbar-nav .nav-item .logout-link {
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 1.2rem;
+                transition: color 0.3s ease;
+            }
+
+                .header-area .navbar-nav .nav-item .logout-link:hover {
+                    color: white;
+                }
+
+        .main-footer {
+            background-color: #0a0f33; /* لون أزرق داكن جداً */
+            color: #adb5bd; /* لون رمادي فاتح للنصوص */
+            padding: 60px 0 30px;
+            font-size: 0.9em;
+        }
+
+            .main-footer .footer-logo img {
+                max-height: 35px;
+                margin-bottom: 15px;
+            }
+
+            .main-footer h4 {
+                color: white;
+                margin-bottom: 20px;
+                font-size: 1.1em;
+                font-weight: 600;
+            }
+
+            .main-footer p, .main-footer li {
+                margin-bottom: 10px;
+            }
+
+            .main-footer a {
+                color: #adb5bd;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .main-footer a:hover {
+                    color: white;
+                }
+
+            .main-footer .list-unstyled li {
+                margin-bottom: 10px;
+            }
+
+            .main-footer .social-icons a {
+                color: white;
+                font-size: 1.3em;
+                margin-right: 15px;
+                transition: color 0.3s ease;
+            }
+
+                .main-footer .social-icons a:hover {
+                    color: #a7c0ff;
+                }
+
+        .footer-bottom {
+            border-top: 1px solid #2c3e50;
+            padding-top: 20px;
+            margin-top: 30px;
+            font-size: 0.85em;
+            text-align: center;
+            color: #8a9ab0;
+        }
+
+        .create-container {
+            background-color: #2a3064;
+            padding: 40px;
+            border-radius: 15px;
+            color: #ffffff;
+            max-width: 950px;
+            margin: 20px auto;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .page-main-title {
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .event-creation-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #4e5491;
+        }
+
+            .event-creation-tabs .tab {
+                padding: 10px 20px;
+                color: #a7c0ff;
+                text-decoration: none;
+                border-bottom: 3px solid transparent;
+                margin-bottom: -1px;
+                transition: all 0.3s;
+            }
+
+                .event-creation-tabs .tab.active {
+                    color: #ffffff;
+                    border-bottom-color: #ffffff;
+                    font-weight: 600;
+                }
+
+                .event-creation-tabs .tab.disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    pointer-events: none;
+                }
+
+        /* --- Styles for Upload Page --- */
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+            .upload-section .section-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 15px;
+                color: #d1dfff;
+            }
+
+        .drop-zone {
+            border: 2px dashed #4e5491;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+            .drop-zone:hover, .drop-zone.drag-over {
+                background-color: #3e447a;
+                border-color: #a7c0ff;
+            }
+
+            .drop-zone .drop-icon {
+                font-size: 2.5rem;
+                color: #a7c0ff;
+                margin-bottom: 10px;
+            }
+
+            .drop-zone p {
+                margin: 0;
+                color: #a7c0ff;
+            }
+
+            .drop-zone .file-name-display {
+                color: #ffffff;
+                font-weight: 500;
+                margin-top: 10px;
+                display: inline-block;
+            }
+
+            .drop-zone.file-selected {
+                border-style: solid;
+                border-color: #27ae60;
+            }
+
+        .current-media-preview {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+
+            .current-media-preview p {
+                font-size: 0.9rem;
+                margin-bottom: 10px;
+            }
+
+            .current-media-preview img, .current-media-preview video {
+                max-width: 100%;
+                height: auto;
+                border-radius: 5px;
+                max-height: 200px;
+            }
+
+        .form-buttons-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #4e5491;
+            padding-top: 25px;
+            margin-top: 10px;
+        }
+
+        .btn-upload-continue {
+            background-color: #c7a44a;
+            color: #ffffff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+            .btn-upload-continue:hover {
+                background-color: #a5883e;
+            }
+
+        .alert-success {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- ======================= HEADER START ======================= -->
+    <header class="header-area sticky-top shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark container">
+            <a class="navbar-brand" asp-action="Explore" asp-controller="Home"><img src="~/image/UniEvents (2).png" alt="UniEvents Logo" style="max-height: 40px;"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                <ul class="navbar-nav align-items-center">
+                    @if (isUserLoggedIn)
+                    {
+                        <li class="nav-item"><a asp-controller="Eventt" asp-action="Create" class="btn btn-outline-light">Create Event</a></li>
+                        <li class="nav-item"><a asp-action="MyFavorites" asp-controller="Home" class="btn btn-outline-light"><i class="fas fa-heart me-2"></i>Favorites</a></li>
+                        <li class="nav-item"><a asp-controller="Profile" asp-action="About" class="btn btn-outline-light">@userName</a></li>
+                        <li class="nav-item"><a class="nav-link logout-link" asp-controller="Account" asp-action="Logout" title="Logout"><i class="fas fa-sign-out-alt"></i></a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a asp-controller="Account" asp-action="Login" class="btn btn-outline-light">Login</a></li>
+                        <li class="nav-item"><a asp-controller="Account" asp-action="Register" class="btn btn-light" style="color:#0033a0;">Register</a></li>
+                    }
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- ======================= HEADER END ======================= -->
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/68498789e7d8d619164a4760/1itfjisld';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+    <!-- ======================= المحتوى الرئيسي للصفحة ======================= -->
+    <main role="main" class="py-5">
+        <div class="container">
+            <h1 class="page-main-title text-center">Upload Event Media</h1>
+            <div class="create-container">
+                <nav class="event-creation-tabs">
+                    <a asp-action="Create" asp-controller="Eventt" asp-route-id="@eventId" class="tab disabled">1. Basic Info</a>
+                    <a asp-action="Upload" asp-controller="MediaFiles" asp-route-eventId="@eventId" class="tab active">2. Upload Media</a>
+                    <a href="#" class="tab disabled">3. Invite Info</a>
+                    <a href="#" class="tab disabled">4. Agreement</a>
+                </nav>
+
+                @if (eventId == 0)
+                {
+                    <div class="alert alert-danger">Error: Event ID is missing. Please <a asp-action="Create" asp-controller="Eventt" class="alert-link">go back</a> and create the event first.</div>
+                }
+                else
+                {
+                    <form asp-controller="MediaFiles" asp-action="Upload" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="eventId" value="@eventId" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                        }
+
+                        <div class="row g-4">
+                            <!-- Banner -->
+                            <div class="col-md-6">
+                                <div class="upload-section">
+                                    <label class="section-title" for="mediaInput_0">Event Banner (Required)</label>
+                                    @if (banner != null)
+                                    {
+                                        <div class="current-media-preview"><p>Current:</p><img src="@Url.Content(banner.FilePath)?@DateTime.Now.Ticks" alt="Banner" /></div>
+                                    }
+                                    <div class="drop-zone" data-input-id="mediaInput_0">
+                                        <i class="fa-solid fa-image drop-icon"></i><p>Drop or Click to Upload Banner</p><span class="file-name-display"></span>
+                                        <input type="file" name="Media[0]" id="mediaInput_0" class="file-input" accept="image/*" style="display:none;" />
+                                        <input type="hidden" name="MediaTypes[0]" value="@((int)MediaType.EventBanner)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Background -->
+                            <div class="col-md-6">
+                                <div class="upload-section">
+                                    <label class="section-title" for="mediaInput_1">Event Background (Optional)</label>
+                                    @if (background != null)
+                                    {
+                                        <div class="current-media-preview"><p>Current:</p><img src="@Url.Content(background.FilePath)?@DateTime.Now.Ticks" alt="Background" /></div>
+                                    }
+                                    <div class="drop-zone" data-input-id="mediaInput_1">
+                                        <i class="fa-solid fa-images drop-icon"></i><p>Drop or Click to Upload Background</p><span class="file-name-display"></span>
+                                        <input type="file" name="Media[1]" id="mediaInput_1" class="file-input" accept="image/*" style="display:none;" />
+                                        <input type="hidden" name="MediaTypes[1]" value="@((int)MediaType.EventBackground)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Video -->
+                            <div class="col-12">
+                                <div class="upload-section">
+                                    <label class="section-title" for="mediaInput_2">Promo Video (Optional)</label>
+                                    @if (video != null)
+                                    {
+                                        <div class="current-media-preview"><p>Current:</p><video controls width="300" preload="metadata"><source src="@Url.Content(video.FilePath)?@DateTime.Now.Ticks" type="@video.ContentType"></video></div>
+                                    }
+                                    <div class="drop-zone" data-input-id="mediaInput_2">
+                                        <i class="fa-solid fa-film drop-icon"></i><p>Drop or Click to Upload Video</p><span class="file-name-display"></span>
+                                        <input type="file" name="Media[2]" id="mediaInput_2" class="file-input" accept="video/*" style="display:none;" />
+                                        <input type="hidden" name="MediaTypes[2]" value="@((int)MediaType.Video)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-buttons-container">
+                            <a asp-action="Create" asp-controller="Eventt" asp-route-id="@eventId" class="btn btn-outline-light"><i class="fas fa-arrow-left me-2"></i>Back to Basic Info</a>
+                            <button type="submit" class="btn btn-upload-continue">Save & Continue <i class="fas fa-arrow-right ms-2"></i></button>
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
+    </main>
+    <!-- ======================= المحتوى الرئيسي ينتهي هنا ======================= -->
+    <!-- ======================= FOOTER START ======================= -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <a href="#" class="footer-logo">
+                        <img src="~/image/UniEvents (2).png" alt="UniEvents Logo">
+                    </a><p class="mt-3">Manage and explore events effortlessly. Log in to create, view, and stay updated on all event activities.</p>
+                    <div class="social-icons mt-4">
+                        <a href="#"><i class="fab fa-instagram"></i></a><a href="#">
+                            <i class="fab fa-facebook-f">
+                            </i>
+                        </a><a href="#"><i class="fab fa-whatsapp"></i></a><a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4>Help & Support</h4><ul class="list-unstyled">
+                        <li>
+                            <a href="#">Customer Support</a>
+                        </li>
+                        <li><a href="#">Organizer Support</a></li>
+                        <li>
+                            <a href="#">Terms of Service</a>
+                        </li>
+                        <li><a href="#">Conditions of Service</a></li>
+                        <li>
+                            <a href="#">Privacy Policy</a>
+                        </li>
+                        <li><a href="#">Report a scam</a></li>
+                    </ul>
+                </div><div class="col-lg-3 col-md-6">
+                    <h4>About us</h4><ul class="list-unstyled">
+                        <li><a href="#">Leadership</a></li>
+                        <li>
+                            <a href="#">Our Mission</a>
+                        </li>
+                        <li><a href="#">Our Vision</a></li>
+                        <li>
+                            <a href="#">Features</a>
+                        </li>
+                        <li><a href="#">Career At</a></li>
+                    </ul>
+                </div><div class="col-lg-3 col-md-6">
+                    <h4>Contact us</h4><p><strong>Mail us at:</strong><br> EventTribe@Gmail.com</p>
+                    <p><strong>Contact at:</strong><br> 1234567890<br> 0987654321</p><ul class="list-unstyled mt-3">
+                        <li>
+                            <a href="#">Press</a>
+                        </li>
+                        <li><a href="#">Blogs</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">Copyright © @DateTime.Now.Year Xpro. All Rights Reserved.</div>
+        </div>
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top rounded-circle" style="display: none; background-color: #0033a0; border-color: #0033a0;"><i class="bi bi-arrow-up"></i></a>
+    </footer>
+    <!-- ======================= FOOTER END ======================= -->
+    <!-- === روابط JS الأساسية للموقع === -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/main.js"></script>
+
+    <!-- === سكربت خاص بمنطقة السحب والإفلات === -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                const inputId = zone.dataset.inputId;
+                const inputElement = document.getElementById(inputId);
+                const fileNameDisplay = zone.querySelector('.file-name-display');
+                const defaultText = zone.querySelector('p');
+                if (!inputElement) return;
+                zone.onclick = (e) => { if (e.target.tagName !== 'INPUT') inputElement.click(); };
+                inputElement.onchange = () => {
+                    if (inputElement.files.length > 0) {
+                        fileNameDisplay.textContent = inputElement.files[0].name;
+                        defaultText.style.display = 'none';
+                        zone.classList.add('file-selected');
+                    }
+                };
+                zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('drag-over'); };
+                zone.ondragleave = () => zone.classList.remove('drag-over');
+                zone.ondrop = (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    if (e.dataTransfer.files.length > 0) {
+                        inputElement.files = e.dataTransfer.files;
+                        inputElement.dispatchEvent(new Event('change'));
+                    }
+                };
+            });
+        });
+    </script>
+</body>
+</html>

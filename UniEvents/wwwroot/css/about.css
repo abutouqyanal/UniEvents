@@ -1,0 +1,207 @@
+﻿/* ================= HEADER ================= */
+header {
+    background-color: #2d2475;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+    header .logo {
+        font-size: 24px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    header .nav-buttons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+.nav-btn {
+    background-color: #e0e4f6;
+    padding: 6px 15px;
+    border-radius: 10px;
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.user-box {
+    background-color: #a1690c;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.profile-icon {
+    font-size: 22px;
+    margin-left: 10px;
+}
+
+
+/* ================= PROFILE ================= */
+.profile-container {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 30px;
+    border-bottom: 1px dashed #ccc;
+}
+
+.profile-pic {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .profile-pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.edit-pic {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    padding: 6px;
+    cursor: pointer;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+    .profile-info h2 {
+        font-size: 24px;
+        color: #1c1b59;
+        margin-bottom: 10px;
+    }
+
+.edit-profile {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #444;
+}
+
+/* ================= TABS ================= */
+.tabs {
+    display: flex;
+    gap: 25px;
+    margin-top: 25px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+    .tabs a {
+        color: #666;
+        text-decoration: none;
+        font-weight: 500;
+        padding-bottom: 5px;
+    }
+
+    .tabs .active {
+        color: #1c1b59;
+        border-bottom: 2px solid #1c1b59;
+    }
+
+/* ================= FOOTER ================= */
+footer {
+    background-color: #2d2475;
+    color: white;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.footer-logo h4 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.footer-logo p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    max-width: 260px;
+}
+
+.footer-columns div {
+    margin-bottom: 20px;
+}
+
+.footer-columns h5 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.footer-columns ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-columns li {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.socials {
+    display: flex;
+    gap: 10px;
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.copyright {
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 30px;
+    padding-bottom: 10px;
+}
+
+/* ================= CONTENT ================= */
+.profile-bio {
+    margin-top: 30px;
+    font-size: 15px;
+    color: #444;
+    line-height: 1.8;
+}
+.footer-columns {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+    .footer-columns > div {
+        flex: 1;
+        min-width: 200px;
+    }

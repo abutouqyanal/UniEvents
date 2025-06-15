@@ -1,0 +1,56 @@
+﻿@model UniEvents.Models.User
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Login.css">
+
+</head>
+<body>
+    <div class="container">
+        <!-- القسم اليسار -->
+        <div class="left-section">
+            <img src="~/image/UniEvents.png" alt="UniEvents.png" class="icon">
+            <br />
+            <br />
+            <h2>Manage and explore events effortlessly.</h2>
+            <br />
+            <p>Log in to create, view, and stay updated on all event activities.</p>
+            <button class="read-more">Read More</button>
+        </div>
+
+        <div class="right-section">
+            <h2>Hello Again!</h2>
+            <p>Welcome Back</p>
+            <form asp-action="Login" asp-controller="Account" method="post">
+                @if (ViewBag.error != null)
+                {
+                    <p style="color:red;">@ViewBag.error</p>
+                }
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="Email" placeholder="Email Address" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="Password" placeholder="Password" required>
+                </div>
+
+                <button type="submit" class="register-btn">Login</button>
+            </form>
+            <p class="signup-text"><a href="#">Forgot Password</a></p>
+            <p class="login-text"> OR</p>
+            <p class="login-text">I don't have account! <a asp-action="Register" asp-controller="Account">Sign Up</a></p>
+            <h6> By Signing Up You Agree The Terms Of Service and Privacy Policy,including Cookie use.</h6>
+        </div>
+    </div>
+</body>
+</html>

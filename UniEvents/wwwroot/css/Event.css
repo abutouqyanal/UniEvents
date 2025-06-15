@@ -1,0 +1,293 @@
+﻿body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f9;
+}
+
+.header {
+    background-color: #3f4297;
+    color: white;
+    padding: 5px;
+    display: flex;
+    justify-content: left;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+}
+
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.carousel {
+    position: relative;
+    max-width: 90%;
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-slides {
+    display: flex;
+    transition: transform 0.4s ease;
+}
+
+.carousel-image {
+    min-width: 100%;
+    box-sizing: border-box;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.indicator {
+    width: 40px;
+    height: 6px;
+    background-color: #fff;
+    opacity: 0.5;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    .indicator.active {
+        opacity: 1;
+        background-color: #3f4297;
+    }
+
+.date {
+    margin: 10px 0;
+    font-size: 20px;
+    color: #333;
+}
+/**/
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.event-details {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.event-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.event-organizer {
+    background-color: #4a4a4a;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: default;
+}
+
+.event-info {
+    margin-top: 20px;
+}
+
+    .event-info h3 {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .event-info p {
+        font-size: 18px;
+        margin: 5px 0;
+    }
+
+.icon {
+    margin-right: 5px;
+}
+
+.location-section {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.location-map {
+    width: 45%; /* عرض الخريطة */
+    min-width: 300px; /* الحد الأدنى للعرض */
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.location-details {
+    width: 50%; /* عرض النصوص */
+    min-width: 250px; /* الحد الأدنى للعرض */
+}
+
+    .location-details h3 {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .location-details p {
+        font-size: 18px;
+        margin: 5px 0;
+    }
+
+@media (max-width: 768px) {
+    .location-section {
+        flex-direction: column;
+    }
+
+    .location-map,
+    .location-details {
+        width: 100%;
+    }
+}
+
+
+
+.placee {
+    text-align: right;
+    padding: 8px 15px;
+}
+/**/
+
+
+
+
+
+
+.booking-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin: 30px auto;
+    text-align: center;
+    flex-direction: column; /* لجعل العناصر في عمود */
+}
+
+.booking-button {
+    background-color: #2e2e8c;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 60%; /* لجعل الزر أعرض */
+    max-width: 300px;
+}
+
+    .booking-button:hover {
+        background-color: #1e1e6c;
+    }
+
+.seats-info {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #4a4a4a;
+    justify-content: center;
+}
+
+.rating {
+    display: flex;
+    gap: 5px;
+    font-size: 30px;
+    cursor: pointer;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.star {
+    color: #ccc;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+    .star.selected,
+    .star.hovered {
+        color: gold;
+    }
+
+
+/**/
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    z-index: 1000;
+    width: 80%;
+    max-width: 400px;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.popup-icon {
+    font-size: 50px;
+    color: #4CAF50;
+}
+
+.popup-button {
+    background-color: #2e2e8c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+
+
+
+
+
+

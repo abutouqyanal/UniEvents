@@ -1,0 +1,41 @@
+﻿@model UniEvents.Models.Event
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Upload Media";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Attendee/upload-media.css" />
+</head>
+
+<div class="create-container">
+    <h1>Create an Event</h1>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <a asp-action="Create" asp-controller="Eventt" class="tab">Basic Info</a>
+        <a asp-action="UploadMedia" asp-controller="Eventt" asp-route-eventId="@Model.EventId" class="tab active">Upload Media</a>
+        <a asp-action="InviteInfo" asp-controller="Eventt" asp-route-eventId="@Model.EventId" class="tab">Invite Info</a>
+        <a asp-action="Agreement" asp-controller="Eventt" asp-route-eventId="@Model.EventId" class="tab">Agreement</a>
+    </div>
+
+    <!-- Upload Area -->
+    <form asp-controller="Eventt" asp-action="UploadMedia" method="post" enctype="multipart/form-data" class="upload-form">
+        <!-- Hidden field to keep the EventId -->
+        <input type="hidden" name="eventId" value="@Model.EventId" />
+
+        <div class="drop-zone" id="dropZone">
+            <div class="upload-icon">
+                <i class="fa fa-camera"></i>
+            </div>
+            <p>Drag and drop images</p>
+            <label class="upload-btn">
+                <i class="fa fa-upload"></i> Upload Images
+                <input type="file" name="files" multiple hidden accept="image/*" />
+            </label>
+        </div>
+
+        <button type="submit" class="submit-btn">Save & Continue</button>
+    </form>
+</div>

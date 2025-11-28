@@ -25,10 +25,10 @@ The platform is built with two main user roles in mind: Attendees and Organizers
 *   **Interactive Feedback:** Users can post comments and ratings on events they have attended.
 *   **Real-time Support:** Integrated live chat support using **Tawk.to** for instant help.
 
-### For Organizers:
+###For Organizers:
 *   **Multi-Step Event Creation:** An intuitive, guided wizard to create new events, including basic info, media uploads (images/videos), and invitation details.
 *   **Event Management:** A "My Events" dashboard to view, edit, and manage all created events.
-*   **Event Analytics:** [اختياري: إذا أكملت هذه الميزة] A dashboard to view key metrics for their events, such as attendee count, ratings, and feedback.
+*   **Event Analytics:** A dashboard to view key metrics for their events, such as attendee count, ratings, and feedback.
 *   **Approval Workflow:** Events submitted by organizers are set to a "Pending" status, awaiting admin approval before being published.
 
 ---
